@@ -5,8 +5,8 @@ const sendEmail = (options) => {
 
     const mailOptions = {
         from: {
-            from: "Crypto Bulot Order Notification",
-            email: 'megane.crypto@gmail.com'
+            from: "Crypto Bulot",
+            email: 'support@crypto-bulot.com'
         },
         to: options.to,
         // Send multiple emails

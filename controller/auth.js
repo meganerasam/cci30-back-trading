@@ -1,6 +1,6 @@
 const Client = require('../models/Client');
 
-exports.getAllClients = async (req, res, next) => {
+exports.getAllUsers = async (req, res, next) => {
     try {
         // Find all user using "type" property
         const clients = await Client.find({ type: "Client" });

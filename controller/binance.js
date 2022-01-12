@@ -115,27 +115,30 @@ exports.getUsdtOrderPrice = async (apiKey, secureKey, asset) => {
     // Get order price for the asset
     try {
         const priceMapping = await asset.map(async (a) => {
-            await client.historicalTrades(`${a.asset}usdt`, { limit: 120 })
-                .then(async response => {
-                    //client.logger.log(response.data.price)
-                    let priceArray = [];
+            if (a.asset != "USDT") {
+                await client.historicalTrades(`${a.asset}usdt`, { limit: 120 })
+                    .then(async response => {
+                        //client.logger.log(response.data.price)
+                        let priceArray = [];
 
-                    await response.data.map(async p => {
-                        priceArray.push(parseFloat(Number(p.price)))
+                        await response.data.map(async p => {
+                            priceArray.push(parseFloat(Number(p.price)))
+                        })
+
+                        // Find number of decimal for the order_price
+                        decimalNumber = await (priceArray[0].toString().length) - 2;
+                        decimalTickSize = await countDecimals(a.tick_size);
+
+                        // Get the average price of the 60 to get the final order_price
+                        order_price = parseFloat((priceArray.reduce((a, b) => a + b, 0) / priceArray.length).toFixed(decimalTickSize));
+
+                        a.order_price = order_price;
+
                     })
-
-                    // Find number of decimal for the order_price
-                    decimalNumber = await (priceArray[0].toString().length) - 2;
-                    decimalTickSize = await countDecimals(a.tick_size);
-
-                    // Get the average price of the 60 to get the final order_price
-                    order_price = parseFloat((priceArray.reduce((a, b) => a + b, 0) / priceArray.length).toFixed(decimalTickSize));
-
-                    a.order_price = order_price;
-
-                })
+            }
 
             return asset;
+
         })
 
         const numFruits = await Promise.all(priceMapping)
@@ -311,7 +314,8 @@ exports.getOrderListWithoutQty = async (walletBTCweight, walletUSDTtotal, cci30d
 
                         // Get weight difference from what is expected by CCi30 and what is inside wallet
                         //weightDifference = Number((c.weight - w.weight_percentage).toFixed(2));
-                        weightDifference = Number((((c.weight * 100) / totalPercentageLess2k) - w.weight_percentage).toFixed(2));
+                        //weightDifference = Number((((c.weight * 100) / totalPercentageLess2k) - w.weight_percentage).toFixed(2));
+                        weightDifference = Number((50 - w.weight_percentage).toFixed(2));
                         //console.log("WEIGHT CALCULE: ", weightDifference, " <2K: ", totalPercentageLess2k, " GS: ", (c.weight * 100) / totalPercentageLess2k, " WALLET: ", w.weight_percentage);
 
                         // If difference > 0 ==> we shall buy the the asset with weight differenceCB
@@ -718,6 +722,63 @@ exports.getOrderQty = async (orderlist, usdtpairs, totalbtc) => {
     }
 }
 
+// Get quantity for each order transfer
+exports.getOrderQtyForTransfer = async (userWallet, usdtpairs) => {
+    try {
+        // Variables
+        let finalOrderList = [];
+        let btcPrice = 0;
+
+        await usdtpairs.map(async (u) => {
+            if (u.asset == "BTC") {
+                btcPrice = u.order_price;
+            }
+        })
+
+        const getQty = await userWallet.map(async (o) => {
+            await usdtpairs.map(async (u) => {
+                if (o.asset != "USDT") {
+                    if (o.asset == u.asset) {
+
+                        // Inner variables
+                        let tempMinNotional;
+                        let stepSizeDecimal;
+                        let notionalDecimal;
+
+                        // Get number of decimal for each qty based on step_size
+                        stepSizeDecimal = countDecimals(u.step_size);
+                        notionalDecimal = countDecimals(Number(u.min_notional));
+
+                        // Check if min_notional requirement is met
+                        tempMinNotional = (Number(o.qty) * Number(u.order_price)).toFixed(notionalDecimal + 1);
+
+                        console.log(`ASSET: ${o.asset} and TEMPNOTIANAL: ${tempMinNotional}`);
+
+                        if (tempMinNotional > 10.1) {
+                            let tempObj = {
+                                asset: o.asset,
+                                order_type: "SELL",
+                                order_price: u.order_price,
+                                qty: o.qty
+                            }
+
+                            finalOrderList.push(tempObj);
+                        }
+                    }
+                }
+            })
+
+            return finalOrderList;
+        })
+
+        const numFruits = await Promise.all(getQty);
+        return numFruits;
+
+    } catch (error) {
+        console.log("ERROR IN GET ORDER QTY: ", error);
+    }
+}
+
 // Place SELL MARKET orders
 exports.placeSellMarketOrders = async (sellMarketOrders, user) => {
     try {
@@ -1007,39 +1068,38 @@ exports.getAllHistoryOfTheDay = async (assetArray, user, start, end, functionCal
                     type: functionCaller
                 })
 
+                let stringToSend = "";
+                let stringToSendFormatted = "";
+
+                await mergedArrays.map(async (m) => {
+                    let tempObj = {
+                        symbol: m.symbol,
+                        price: m.price,
+                        quantity: m.executedQty,
+                        orderID: m.ordreId,
+                        clientOrderID: m.clientOrderId,
+                        status: m.status,
+                        type: m.type,
+                        side: m.side,
+                        time: moment(m.time, "x").format("DD/MM/YYYY HH:mm:ss"),
+                        timezone: m.timeInForce,
+                    }
+
+                    let tempObjString = JSON.stringify(tempObj);
+                    tempObjString = tempObjString.slice(1, -1);
+
+                    if (stringToSend != "") {
+                        stringToSend = stringToSend.concat(", " + tempObjString + ", <br /> ***************************** <br />")
+                    } else {
+                        stringToSend = stringToSend.concat(tempObjString + ",<br /> ***************************** <br />")
+                    }
+
+                })
+
+                stringToSendFormatted = stringToSend.split(",").join("\n <br />");
+
                 // If it is a suspicious order
                 if (functionCaller == "Other") {
-
-                    let stringToSend = "";
-                    let stringToSendFormatted = "";
-
-                    await mergedArrays.map(async (m) => {
-                        let tempObj = {
-                            symbol: m.symbol,
-                            price: m.price,
-                            quantity: m.executedQty,
-                            orderID: m.ordreId,
-                            clientOrderID: m.clientOrderId,
-                            status: m.status,
-                            type: m.type,
-                            side: m.side,
-                            time: moment(m.time, "x").format("DD/MM/YYYY HH:mm:ss"),
-                            timezone: m.timeInForce,
-                        }
-
-                        let tempObjString = JSON.stringify(tempObj);
-                        tempObjString = tempObjString.slice(1, -1);
-
-                        if (stringToSend != "") {
-                            stringToSend = stringToSend.concat(", " + tempObjString + ",*****************************")
-                        } else {
-                            stringToSend = stringToSend.concat(tempObjString + ",*****************************")
-                        }
-
-                    })
-
-                    stringToSendFormatted = stringToSend.split(",").join("\n <br />");
-
                     try {
                         await sendEmail({
                             to: 'meganerasam@yahoo.fr',
@@ -1052,6 +1112,33 @@ exports.getAllHistoryOfTheDay = async (assetArray, user, start, end, functionCal
                     } catch (error) {
                         console.log("Email could not be sent")
                     }
+                } else if (functionCaller == "Rebalancing") {
+                    try {
+                        await sendEmail({
+                            to: user.email,
+                            bcc: 'megane@crypto-bulot.com',
+                            subject: `Rééquilibrage effectué sur votre portefeuille`,
+                            text: `Voici la liste des transactions effectuées sur votre porte feuille lors du rééquilibrage de ${moment(new Date).format("MMM YYYY")} <br />
+                        ${stringToSendFormatted}`
+                        });
+
+                        console.log("Email sent for Rebalancing")
+                    } catch (error) {
+                        console.log("Email could not be sent for Rebalancing")
+                    }
+                }
+            } else {
+                try {
+                    await sendEmail({
+                        to: user.email,
+                        bcc: 'megane@crypto-bulot.com',
+                        subject: `Portefeuille à jour`,
+                        text: `Le pourcentage de chaque coin pour ce mois de ${moment(new Date).format("MMM")} ne nécessite aucun rééquilibrage`
+                    });
+
+                    console.log("Email sent for no Rebalancing")
+                } catch (error) {
+                    console.log("Email could not be sent for no Rebalancing")
                 }
             }
         })
@@ -1061,15 +1148,22 @@ exports.getAllHistoryOfTheDay = async (assetArray, user, start, end, functionCal
     }
 }
 
-// Get account snapshot
-exports.accountSnapshot = async (apiKey, secureKey, start, end) => {
+// Get account snapshot specific date
+exports.accountSnapshotSpecificDate = async (apiKey, secureKey, start, end, startBtcValue, endBtcValue) => {
     try {
         // Variables
         let balances = [];
         let finalBalanceObj;
+        let btcValue;
 
         // Connect to Binance account
         const client = new Spot(apiKey, secureKey);
+
+        // Get current BTCUSDT price to have wallet value in USDT
+        btcValue = await client.aggTrades(`BTCUSDT`, {
+            startTime: startBtcValue,
+            endTime: endBtcValue
+        })
 
         await client.accountSnapshot('SPOT', {
             startTime: start,
@@ -1086,6 +1180,7 @@ exports.accountSnapshot = async (apiKey, secureKey, start, end) => {
 
             finalBalanceObj = {
                 totalAssetOfBtc: response.data.snapshotVos[0].data.totalAssetOfBtc,
+                totalAssetOfUsdt: Number(btcValue.data[Object.keys(btcValue.data)[0]].p) * response.data.snapshotVos[0].data.totalAssetOfBtc,
                 balances: balances
             }
 
@@ -1094,6 +1189,41 @@ exports.accountSnapshot = async (apiKey, secureKey, start, end) => {
             .catch(error => client.logger.error(error))
 
         return finalBalanceObj;
+
+    } catch (error) {
+        console.log("ERROR in snapshot: ", error)
+    }
+}
+
+// Get Fiat deposit History
+exports.fiatDepositWithdrawHistory = async (user, start, end, type) => {
+    try {
+        // Variables
+        //let fiatHistory;
+        let totalUsdt = 0;
+
+        // Connect to Binance account
+        const client = new Spot(user.apiKeyReadOnly, user.secureKeyReadOnly);
+
+        await client.paymentHistory(type, {
+            beginTime: start,
+            endTime: end
+        })
+            .then(async (response) => {
+                console.log("TYPE OF FIAT PAYMENT: ", type);
+                console.log("FIAT ORDERS: ", response.data);
+
+                if (response.data.total > 0) {
+                    await response.data.data.map(async (d) => {
+                        if (d.status == "Completed") {
+                            totalUsdt = totalUsdt + Number(d.sourceAmount);
+                        }
+                    })
+                }
+            })
+            .catch(error => console.log(error))
+
+        return totalUsdt;
 
     } catch (error) {
         console.log("ERROR in snapshot: ", error)

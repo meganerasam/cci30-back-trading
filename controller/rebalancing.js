@@ -15,6 +15,7 @@ const {
 const { getCCi30Info } = require('./constituents');
 const { getAllUsers } = require('./auth');
 const moment = require('moment');
+const sendEmail = require('../utils/sendEmail');
 
 const isInArray = (arrayToCkeck, assetToCheck) => {
     let arr = arrayToCkeck;
@@ -76,6 +77,8 @@ exports.rebalancing = async () => {
                 // 3.6. Get order list with quantity
                 if (ordersWithoutQty.orderList.length > 0) {
                     ordersWithQty = await getOrderQty(ordersWithoutQty.orderList, allUsdtPairs, binanceWalletBtcValue.totalBTC)
+
+                    console.log("ORDERS LIST: ", ordersWithQty);
 
                     // Inner variables
                     let sellOrders = [];
@@ -141,6 +144,18 @@ exports.rebalancing = async () => {
 
                 } else {
                     console.log("NO ORDER TO MAKE")
+                    try {
+                        await sendEmail({
+                            to: u.email,
+                            bcc: 'megane@crypto-bulot.com',
+                            subject: `Portefeuille à jour`,
+                            text: `Le pourcentage de chaque coin pour ce mois de ${moment(new Date).format("MMM")} ne nécessite aucun rééquilibrage`
+                        });
+
+                        console.log("Email sent for no Rebalancing")
+                    } catch (error) {
+                        console.log("Email could not be sent for no Rebalancing")
+                    }
                 }
             }, i * 60 * 1000);
         })
