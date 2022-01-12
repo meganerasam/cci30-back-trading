@@ -11,7 +11,9 @@ const app = express();
 app.use(express.json());
 
 //Define Routes 
+app.use('/api/client', require('./routes/auth'));
 app.use('/api/rebalancing', require('./routes/rebalancing'));
+app.use('/api/manual', require('./routes/rebalancing'));
 app.use('/api/transfer', require('./routes/transfer'));
 
 app.get('/', (req, res) => res.json({ msg: 'Welcome to the Trading Crypto Bulot...' }));

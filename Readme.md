@@ -14,6 +14,7 @@ Interface Admin to add client (both dev and trading) DB
 Own rebalancing calculation
 
 Manual endpoint for first rebalancing
+--> Format Email
 
 Change mail destination
 

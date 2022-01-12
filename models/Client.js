@@ -20,18 +20,6 @@ const ClientSchema = mongoose.Schema({
             "Please provide a valid email"
         ]
     },
-    emailStats: {
-        type: String,
-        required: [true, "Please provide an email to send stats to"],
-        match: [
-            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-            "Please provide a valid email"
-        ]
-    },
-    phone: {
-        type: String,
-        required: [true, "Please provide a phone number"]
-    },
     apiKey: {
         type: String,
         required: [true, "Please provide an API key"]
@@ -50,31 +38,25 @@ const ClientSchema = mongoose.Schema({
     },
     apiKeyTransfer: {
         type: String,
+        required: [true, "Please provide a api key for transfer access"]
     },
     secureKeyTransfer: {
         type: String,
+        required: [true, "Please provide a secure key for transfer access"]
     },
     type: {
         type: String,
         required: [true, "Please provide a user type"],
-        default: "user"
+        default: "Client"
     },
     startSubscription: {
         type: String,
         required: [true, "Please provide a subscription start date"]
     },
-    subscriptionType: {
-        type: String,
-        required: [true, "Please provide a subscription type"]
-    },
     initialCapital: {
         type: Number,
         required: [true, "Please provide an initial investmeen amount"]
-    },
-    curerncyCapital: {
-        type: String,
-        required: [true, "Please provide a currency for your capital"]
-    },
+    }
 },
     {
         timestamps: true
