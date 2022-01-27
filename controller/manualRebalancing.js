@@ -10,12 +10,14 @@ const {
     getOpenOrdersList,
     convertToBnbArray,
     convertToBnb,
-    getAllHistoryOfTheDay
+    getAllHistoryOfTheDay,
+    getAllHistoryOfTheDayManual
 } = require('./binance');
 const { getCCi30Info } = require('./constituents');
 const { getAllUsers } = require('./auth');
 const moment = require('moment');
 const sendEmail = require('../utils/sendEmail');
+const Client = require('../models/Client');
 
 const isInArray = (arrayToCkeck, assetToCheck) => {
     let arr = arrayToCkeck;
@@ -26,6 +28,7 @@ const isInArray = (arrayToCkeck, assetToCheck) => {
 }
 
 exports.rebalancing = async (req, res, next) => {
+    console.log("INSIDE")
     try {
         // Variables
         let allUsers;
@@ -39,15 +42,22 @@ exports.rebalancing = async (req, res, next) => {
             // 1. Get CCi30 constituents from Google Sheet
             getCCi30Info()
         ]);
-        cci30Constituents = callPromises[1];
+        cci30Constituents = callPromises[0];
+
+        console.log("CCI: ", cci30Constituents);
+
+        let u = await Client.find({ apiKey: req.query.api, secureKey: req.query.secure})
+        console.log("U: ", u);
 
         // 3. Loop through all users and rebalance their wallet
         // Inner variables for each user 
         let apiKey = req.query.api;
-        let secureKey = req.quesry.secure;
+        let secureKey = req.query.secure;
 
         // 3.1. Get Binance wallet info
         let userWalletConstituents = await getBinanceAccountInfo(apiKey, secureKey);
+
+        console.log("USER WALLET: ", userWalletConstituents);
 
         // 3.2. Get all cci30 USDT value
         let allUsdtPairsRaw = await getAllUSDTPairs(apiKey, secureKey, userWalletConstituents, cci30Constituents);
@@ -99,7 +109,7 @@ exports.rebalancing = async (req, res, next) => {
             setTimeout(async () => {
                 exeBuyLimitStatus = await placeBuyLimitOrders(apiKey, secureKey, buyOrders)
                 //console.log("EXEC BUY LIMIT: ", exeBuyLimitStatus)
-            }, (i + 0.5) * 60 * 1000);
+            }, (0.5) * 60 * 1000);
 
             // 3.9. Check for limit orders that have not been executed yet
             // 3.10. Cancel them and go for market orders
@@ -110,7 +120,7 @@ exports.rebalancing = async (req, res, next) => {
                 /*let newUserWalletConstituents = await getBinanceAccountInfo(apiKey, secureKey);
                 let bnbConversionArray = await convertToBnbArray(cci30Constituents, newUserWalletConstituents);
                 let bnbConversionOrder = await convertToBnb(apiKey, secureKey, bnbConversionArray);*/
-            }, (i + 1.5) * 60 * 1000);
+            }, (1.5) * 60 * 1000);
 
             // 3.12. Get order history of rebalacing
             setTimeout(async () => {
@@ -131,9 +141,11 @@ exports.rebalancing = async (req, res, next) => {
                 let end = moment(new Date()).utcOffset('+0000').format("x");
                 let start = moment(end, "x").subtract(60, 'minutes').format("x");
 
+    
+
                 // 3.12.3. Get order history of merged assets
-                await getAllHistoryOfTheDay(combinedConsituents, u, start, end, "Rebalancing");
-            }, (i + 2) * 60 * 1000);
+                await getAllHistoryOfTheDayManual(combinedConsituents, u, start, end, "Rebalancing");
+            }, (2) * 60 * 1000);
 
         } else {
             console.log("NO ORDER TO MAKE")
@@ -142,7 +154,7 @@ exports.rebalancing = async (req, res, next) => {
                     to: u.email,
                     bcc: 'megane@crypto-bulot.com',
                     subject: `Portefeuille à jour`,
-                    text: `Le pourcentage de chaque coin pour ce mois de ${moment(new Date).format("MMM")} ne nécessite aucun rééquilibrage`
+                    text: `Bonjour ${u.firstName}, <br />Le pourcentage de chaque coin pour ce mois de ${moment(new Date).format("MMM")} ne nécessite aucun rééquilibrage. <br /><br /> L'Equipe Crypto Bulot`
                 });
 
                 console.log("Email sent for no Rebalancing")

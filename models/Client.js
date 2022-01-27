@@ -55,7 +55,12 @@ const ClientSchema = mongoose.Schema({
     },
     initialCapital: {
         type: Number,
-        required: [true, "Please provide an initial investmeen amount"]
+        required: [true, "Please provide an initial investment amount"]
+    },
+    status: {
+        type: Number,
+        required: [true, "Please provide user status"],
+        default: 1
     }
 },
     {

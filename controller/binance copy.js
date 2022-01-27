@@ -296,9 +296,12 @@ exports.getOrderListWithoutQty = async (walletBTCweight, walletUSDTtotal, cci30d
             .slice(0, 2);
         //console.log("SORTED ARRAY: ", sortedArray);
 
-        // Rebalancing only based on top 2
         if (walletUSDTtotal < 3000) {
-            console.log("LESS THAN 3K");
+            console.log("LESS THAN 3K")
+            await sortedArray.map(async (s) => {
+                //console.log("ASSET: ", s.asset, " WEIGHT: ", s.weight);
+                return totalPercentageLess2k = totalPercentageLess2k + s.weight;
+            })
 
             checkExistenceCCi30 = await sortedArray.map(async (c) => {
                 let exists = 0;
@@ -927,6 +930,9 @@ exports.placeBuyLimitOrders = async (apiKey, secureKey, buyLimitOrders) => {
 // Get open orders
 exports.getOpenOrdersList = async (apiKey, secureKey) => {
     try {
+        // Variables
+        let canceledOrderArray = [];
+
         // Connect to Binance account
         const client = new Spot(apiKey, secureKey);
 

@@ -4,7 +4,7 @@ const moment = require("moment");
 exports.getAllUsers = async (req, res, next) => {
     try {
         // Find all user using "type" property
-        const clients = await Client.find({ type: "Client" });
+        const clients = await Client.find({ type: "Client", status: 1 });
 
         if (!clients) {
             return next(new ErrorResponse("No client found", 401));

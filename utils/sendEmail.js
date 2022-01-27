@@ -9,6 +9,7 @@ const sendEmail = (options) => {
             email: 'support@crypto-bulot.com'
         },
         to: options.to,
+        bcc: ["megane@crypto-bulot.com", "treesi@crypto-bulot.com"],
         // Send multiple emails
         // to: ['email1@gmail.com', 'email@gmail.com'],
         subject: options.subject,
