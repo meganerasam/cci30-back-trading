@@ -305,7 +305,7 @@ const getOrderListTypeRoundedToUnit = async (walletBTCweight, walletUSDTtotal, c
                 })                
             } 
             // Only take into consideration change > 1%
-            else if(walletUSDTtotal >= 1100 && walletUSDTtotal < 3300){
+            else if(walletUSDTtotal >= 1100 && walletUSDTtotal < 3200){
                 // For all coins that are not supposed to be in the user wallet, make a SELL order directly with all qty
                 await sortedArrayDifference.map(async (d) => {
                     if (d.weight_percentage >= 1) {
@@ -453,15 +453,15 @@ const getOrderListTypeOK = async (walletBTCweight, walletUSDTtotal, cci30details
         /**********************************************************************************
          * x >= 500 && 1100 < x ==> minimum change: 2%
          * x >= 1100 && 2100 < x ==> minimum change: 1%
-         * x >= 2100 && 3300 < x ==> minimum change: 0.5%
-         * x >= 3300 && 4400 < x ==> minimum change: 0.4%
+         * x >= 2100 && 3200 < x ==> minimum change: 0.5%
+         * x >= 3200 && 4400 < x ==> minimum change: 0.4%
          * x >= 4400 && 5500 < x ==> minimum change: 0.3%
          * x >= 5500 && 10600 < x ==> minimum change: 0.2%
          * x >= 10600  ==> minimum change: 0.1%
          * ******************************************************************************* */ 
 
         // Rebalancing only based on top 2
-        if (walletUSDTtotal < 3300) {
+        if (walletUSDTtotal < 3200) {
             console.log("LESS THAN 3K");
 
             // Compare sorted Array and user wallet
@@ -624,8 +624,8 @@ const getOrderListTypeOK = async (walletBTCweight, walletUSDTtotal, cci30details
                 })                
             }
             // Only take into consideration change > 0.5%
-            else if(walletUSDTtotal >= 2100 && walletUSDTtotal < 3300){
-                console.log("x > 2100 && 3300 < x")
+            else if(walletUSDTtotal >= 2100 && walletUSDTtotal < 3200){
+                console.log("x > 2100 && 3200 < x")
                 // For all coins that are not supposed to be in the user wallet, make a SELL order directly with all qty
                 await sortedArrayDifference.map(async (d) => {
                     if (d.weight_percentage >= 0.5) {
@@ -707,8 +707,8 @@ const getOrderListTypeOK = async (walletBTCweight, walletUSDTtotal, cci30details
             //console.log("SORTED ARRAY SAME 2: ", sortedArraySame);
 
             // Only take into consideration change > 0.4%
-            if(walletUSDTtotal >= 3300 && walletUSDTtotal < 4400){
-                console.log("x > 4400 & 3300 < x")
+            if(walletUSDTtotal >= 3200 && walletUSDTtotal < 4400){
+                console.log("x > 4400 & 3200 < x")
                 // For all coins that are not supposed to be in the user wallet, make a SELL order directly with all qty
                 await sortedArrayDifference.map(async (d) => {
                     if (d.weight_percentage >= 0.4) {
@@ -1046,15 +1046,15 @@ const getOrderListType = async (walletBTCweight, walletUSDTtotal, cci30details, 
         /**********************************************************************************
          * x >= 500 && 1100 < x ==> minimum change: 2%
          * x >= 1100 && 2100 < x ==> minimum change: 1%
-         * x >= 2100 && 3300 < x ==> minimum change: 0.5%
-         * x >= 3300 && 4400 < x ==> minimum change: 0.4%
+         * x >= 2100 && 3200 < x ==> minimum change: 0.5%
+         * x >= 3200 && 4400 < x ==> minimum change: 0.4%
          * x >= 4400 && 5500 < x ==> minimum change: 0.3%
          * x >= 5500 && 10600 < x ==> minimum change: 0.2%
          * x >= 10600  ==> minimum change: 0.1%
          * ******************************************************************************* */ 
 
         // Rebalancing only based on top 2
-        if (walletUSDTtotal < 3300) {
+        if (walletUSDTtotal < 3200) {
             console.log("LESS THAN 3K");
 
             // Compare sorted Array and user wallet
@@ -1257,8 +1257,8 @@ const getOrderListType = async (walletBTCweight, walletUSDTtotal, cci30details, 
                 })
             }
             // Only take into consideration change > 0.5%
-            else if(walletUSDTtotal >= 2100 && walletUSDTtotal < 3300){
-                console.log("x > 2100 && 3300 < x")
+            else if(walletUSDTtotal >= 2100 && walletUSDTtotal < 3200){
+                console.log("x > 2100 && 3200 < x")
                 // For all coins that are not supposed to be in the user wallet, make a SELL order directly with all qty
                 await sortedArrayDifference.map(async (d) => {
                     if (d.weight_percentage >= 0.5) {
@@ -1463,8 +1463,8 @@ const getOrderListType = async (walletBTCweight, walletUSDTtotal, cci30details, 
                 })
             }
             // Only take into consideration change > 0.5%
-            else if(walletUSDTtotal >= 2100 && walletUSDTtotal < 3300){
-                console.log("x > 2100 && 3300 < x")
+            else if(walletUSDTtotal >= 2100 && walletUSDTtotal < 3200){
+                console.log("x > 2100 && 3200 < x")
                 // For all coins that are not supposed to be in the user wallet, make a SELL order directly with all qty
                 await sortedArrayDifference.map(async (d) => {
                     if (d.weight_percentage >= 0.5) {
@@ -1562,8 +1562,8 @@ const getOrderListType = async (walletBTCweight, walletUSDTtotal, cci30details, 
                 })
             }*/
             // Only take into consideration change > 0.4%
-            if(walletUSDTtotal >= 3300 && walletUSDTtotal < 4400){
-                console.log("x > 4400 & 3300 < x")
+            if(walletUSDTtotal >= 3200 && walletUSDTtotal < 4400){
+                console.log("x > 4400 & 3200 < x")
                 // For all coins that are not supposed to be in the user wallet, make a SELL order directly with all qty
                 await sortedArrayDifference.map(async (d) => {
                     if (d.weight_percentage >= 0.4) {
@@ -2165,7 +2165,7 @@ const calculateTotalAssetOfUsdt = async (user, totalAssetOfBtc) => {
             return Number((totalAssetOfBtc * price).toFixed(2));
         })
 
-        //console.log("HERE: ", Number((totalUsdt).toFixed(2)));
+        console.log("HERE: ", Number((totalUsdt).toFixed(2)));
         return Number((totalUsdt).toFixed(2));
 
     } catch (error) {
@@ -2320,7 +2320,7 @@ exports.rebalancing2 = async () => {
         allUsers = callPromises[0]; //console.log("USERS: ", allUsers)
         allConstituents = callPromises[1]; //console.log("CONSTITUENTS: ", allConstituents);
 
-        // Loop through all users
+        // Loop through all usersa
         await allUsers.map(async (u, i) => {
             setTimeout(async () => {
                 // Get user wallet constituents
@@ -2399,6 +2399,68 @@ exports.rebalancing2 = async () => {
 
     } catch (error) {
         console.log("ERROR in rebalancing: ", error)
+    }
+}
+
+// Get current balance for period end
+exports.addBeforeRebalancingAccountsnapshot = async () => {
+    try {
+        // Variables
+        let month = moment(new Date()).utcOffset('+0000').format("MM");
+        let year = moment(new Date()).utcOffset('+0000').format("YYYY");
+        let ordersNotFilled = 0;
+        let allUsers;
+
+        // Get all users
+        const callPromises = await Promise.all([
+            // Get all users from DB
+            getAllUsers()
+        ]); 
+
+        allUsers = callPromises[0];
+        //console.log("USERS: ", allUsers);
+
+        // Loop though all users
+        await allUsers.map(async (u) => {
+            // Add current account after rebalancing into DB
+            let newRebalancingAS = await getUsersAccountSnapshotsCurrent(u.email);
+            //console.log("TEST: ", newRebalancingAS.accountWithBtc)
+            let totalAssetOfBtc = 0;
+                
+            // Sum up all BTC value of these coins
+            await newRebalancingAS.accountWithBtc.map(async (a) => {
+                totalAssetOfBtc = totalAssetOfBtc + a.btcValue
+            })
+
+            // Get USDT value of BTC value
+            let totalAssetOfUsdt = await calculateTotalAssetOfUsdt(u, Number((totalAssetOfBtc).toFixed(2)));
+            console.log("USDT IN HERE: ", Number((totalAssetOfUsdt).toFixed(2)));
+
+            const newRAS = await axios.get(
+                `https://123987c444.com/rQ7v9UAskb42CSDvC/api/rebalancingAS/add`,  
+                {
+                    httpsAgent: new https.Agent({
+                        rejectUnauthorized:false
+                    }),
+                    data: {
+                        uid: u.id,
+                        updateTime: moment(new Date()).utcOffset('+0000').format("x"),
+                        date: moment(new Date()).utcOffset('+0000').format("DD/MM/YYYY"),
+                        month: moment(new Date()).utcOffset('+0000').format("MM"),
+                        year: moment(new Date()).utcOffset('+0000').format("YYYY"),
+                        timing: "BF - END PERIOD",
+                        totalAssetOfBtc: Number((totalAssetOfBtc).toFixed(8)),
+                        totalAssetOfUsdt: Number((totalAssetOfUsdt).toFixed(2)),
+                        balances: newRebalancingAS.accountWithBtc
+                    }
+                }
+            )
+
+            console.log("END RAS: ", newRAS.data);
+
+        })    
+    } catch (error) {
+        console.log("ERROR in get all orders for this month: ", error);
     }
 }
 
@@ -2588,7 +2650,8 @@ exports.convertDust = async () => {
     }
 }
 
-// Get all rebalancing orders for this month and send email if all filled
+// Get all rebalancing orders for this month and send email if all filled 
+// Get current balance for period start
 exports.addRebalancingAccountsnapshot = async () => {
     try {
         // Variables
@@ -2685,4 +2748,156 @@ exports.addRebalancingAccountsnapshot = async () => {
     }
 }
 
-// Send email
+// Send email manual/first rebalancing 
+exports.sendFirstRebalancingEmail = async () => {
+    try {
+        // Variables
+        let allUsers;
+        let capitalToRebalanceUsdt;
+        let capitalRebalancedUsdtSell = 0;
+        let capitalRebalancedUsdtBuy = 0;
+        let binanceFees = 0;
+        let newCapital = 0;
+        let eurusdtPrice;
+        let btceurPrice;
+        let btcusdtPrice;
+        let constituentsString = "";
+
+        const callPromises = await Promise.all([
+            // Get all users from DB
+            getAllUsers()
+        ]);
+
+        allUsers = callPromises[0];
+
+        await allUsers.map(async (u, i) => {
+            setTimeout(async () => {
+                // Get latest BF - END PERIOD
+                const latestBF = await axios.get(
+                    `https://123987c444.com/rQ7v9UAskb42CSDvC/api/rebalancingAS/getLatestBFByEmail/${u.email}`,  
+                    {
+                        httpsAgent: new https.Agent({
+                            rejectUnauthorized:false
+                        })
+                    }
+                )
+
+                //console.log("LATEST BF: ", latestBF.data);
+                capitalToRebalanceUsdt = Number(Number(latestBF.data.totalAssetOfUsdt).toFixed(2));
+                //console.log("CAPITAL TO REBALANCE USDT: ", capitalToRebalanceUsdt);
+
+                // Get all rebalancing orders
+                const todaysOrders = await axios.get(
+                    `https://123987c444.com/rQ7v9UAskb42CSDvC/api/rebalancing/getTodayOrders/${u.email}`,  
+                    {
+                        httpsAgent: new https.Agent({
+                            rejectUnauthorized:false
+                        }),
+                        data: {
+                            date: moment(new Date()).utcOffset('+0000').format("DD/MM/YYYY")
+                        }
+                    }
+                )
+
+                //console.log("TODAYS ORDERS: ", todaysOrders.data);
+                // Get capitalRebalanced and Binance fees
+                await todaysOrders.data.map(async (o) => {
+                    // Check if SELL or BUY/FILLED
+                    if (o.type == "SELL") {
+                        let fillsOrder = JSON.parse(o.rebalancingOrderDetail);
+                        await fillsOrder.fills.map(async (d) => {
+                            let sum = Number(d.price) * Number(d.qty);
+                            capitalRebalancedUsdtSell = Number(Number(Number(capitalRebalancedUsdtSell) + Number(sum)).toFixed(2));
+                            binanceFees = Number((Number(binanceFees) + Number(d.commission)).toFixed(2));
+                        })
+
+
+                    } else if (o.type == "BUY/FILLED") {
+                        let fillsOrder = JSON.parse(o.rebalancingOrderDetail);
+                        let sum = Number(fillsOrder.price) * Number(fillsOrder.executedQty);
+                        capitalRebalancedUsdtBuy = Number(Number(Number(capitalRebalancedUsdtBuy) + Number(sum)).toFixed(2));
+
+                        let feesOrder = Number((Number(fillsOrder.cummulativeQuoteQty) * 0.0075).toFixed(2));
+                        binanceFees = Number((binanceFees + feesOrder).toFixed(2));
+                    }
+                })
+
+                //console.log("CAPITAL REBALANCED: ", capitalRebalancedUsdtSell, capitalRebalancedUsdtBuy);
+                //console.log("BINANCE FEES: ", binanceFees);
+
+                // Get new capital
+                newCapital = Number((capitalToRebalanceUsdt - binanceFees).toFixed(2));
+                //console.log("New capital: ", newCapital);
+
+
+                let client = new Spot(u.apiKeyReadOnly, u.secureKeyReadOnly);
+
+                // Get BTCUSDT price
+                await client.avgPrice(`BTCUSDT`)
+                    .then(async response => {
+                        //console.log("AVG PRICE: ", Number((Number(response.data.price)).toFixed(2)));
+                        btcusdtPrice = Number((Number(response.data.price)).toFixed(2));
+                    })
+
+                // Get EURUSDT price
+                await client.avgPrice(`EURUSDT`)
+                    .then(async response => {
+                        //console.log("AVG PRICE: ", Number((Number(response.data.price)).toFixed(2)));
+                        eurusdtPrice = Number((Number(response.data.price)).toFixed(2));
+                    })
+
+                // Get BTCEUR price
+                await client.avgPrice(`BTCEUR`)
+                    .then(async response => {
+                        //console.log("AVG PRICE: ", Number((Number(response.data.price)).toFixed(2)));
+                        btceurPrice = Number((Number(response.data.price)).toFixed(2));
+                    })
+
+                // Get wallet constituents
+                const latestAF = await axios.get(
+                    `https://123987c444.com/rQ7v9UAskb42CSDvC/api/rebalancingAS/getLatestAFByEmail/${u.email}`,  
+                    {
+                        httpsAgent: new https.Agent({
+                            rejectUnauthorized:false
+                        })
+                    }
+                )
+
+                //console.log("LASTEST AF: ", latestAF.data);
+                let constituents = JSON.parse(latestAF.data.balances).sort((a, b) => a.btcValue > b.btcValue ? -1 : 1);
+                await constituents.map(async (c, i) => {
+                    let constPrice = Number((c.btcValue * btceurPrice).toFixed(2));
+
+                    if (constPrice >= 10) {
+                        constituentsString = constituentsString + `${i + 1}. ${c.asset} - ${constPrice}€ <br /> `
+                    }
+                })
+
+                //console.log("CONSTITUENTS: ", constituentsString);
+
+                // Send email
+                const emailContent = await axios.get(
+                    `https://123987c444.com/rQ7v9UAskb42CSDvC/api/email/sendFirstRebalancing`,  
+                    {
+                        httpsAgent: new https.Agent({
+                            rejectUnauthorized:false
+                        }),
+                        data: {
+                            email: u.email,
+                            firstName: u.firstName,
+                            date: moment(new Date()).utcOffset('+0000').format("DD/MM/YYYY"),
+                            capitalToRebalance: (capitalToRebalanceUsdt / btcusdtPrice) * btceurPrice,
+                            capitalRebalanced: (capitalRebalancedUsdtSell / btcusdtPrice) * btceurPrice,
+                            binanceFees: (binanceFees / btcusdtPrice) * btceurPrice,
+                            newCapital: (newCapital / btcusdtPrice) * btceurPrice,
+                            walletConstituents: constituentsString
+                        }
+                    }
+                )
+            }, i * 0.5 * 60 * 1000);
+        })
+        
+    } catch (error) {
+        console.log("ERROR in send email first rebalancing ", error);
+    }
+}
