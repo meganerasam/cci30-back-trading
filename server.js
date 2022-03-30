@@ -6,7 +6,7 @@ const fs = require("fs");
 const connectDB = require('./config/db');
 
 // Connect Database
-connectDB();
+//connectDB();
 
 const app = express();
 

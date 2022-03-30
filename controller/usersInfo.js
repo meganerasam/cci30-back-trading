@@ -77,3 +77,23 @@ exports.getUsersAccountSnapshotsCurrent = async (email) => {
         console.log("Error in get user account snapshots: ", error);
     }
 }
+
+// Get specific user account snapshots now
+exports.getUsersAccountSnapshotsCurrentAndUpdate = async (email) => {
+    try {
+
+        const userAccountSnapshots = await axios.get(
+            `https://123987c444.com/rQ7v9UAskb42CSDvC/api/snapshot/getAndUpdate/${email}`,
+            {
+                httpsAgent: new https.Agent({
+                    rejectUnauthorized:false
+                })
+            }
+        )
+
+        console.log("GET USERS AS CURR AND UPDATE: ", userAccountSnapshots.data);
+        return userAccountSnapshots.data;
+    } catch (error) {
+        console.log("Error in get user account snapshots: ", error);
+    }
+}
